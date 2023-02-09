@@ -1,5 +1,5 @@
 // ############################################################
-// Les bases de scala
+// Les bases de scala - version scala 2
 // ############################################################
 
 // source : https://docs.scala-lang.org/tour/basics.html
@@ -109,4 +109,14 @@ println(getSquareString(2.5)) // 6.25
 // -----------------------------------------------------------------
 // Les Classes dans scala
 // -----------------------------------------------------------------
+// Vous pouvez définir des classes avec le mot-clé class, suivi de son nom et des paramètres du constructeur :
+class Greeter(prefix: String, suffix: String) {
+  def greet(name: String): Unit =
+    println(prefix + name + suffix)
+}
+
+val greeter = new Greeter("Hello, ", "!") // pas besoin de new dans scala 3
+greeter.greet("Abdelmajid") // Hello, Scala developer!
+
+
 
