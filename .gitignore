@@ -14,7 +14,6 @@ chapitre0/target
 .tasty
 
 # sbt
-chapitre0/project/
 project/target/
 target/
 
