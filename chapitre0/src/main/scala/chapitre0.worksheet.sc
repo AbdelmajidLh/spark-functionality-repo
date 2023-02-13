@@ -34,20 +34,20 @@ val x: Int = 1 + 1
 // Les Variables dans scala 
 // -----------------------------------------------------------------
 // Les variables sont comme des valeurs, sauf que vous pouvez les réaffecter. Vous pouvez définir une variable avec le mot-clé var.
-var x = 1 + 1
+var y = 1 + 1
 x = 3 // This compiles because "x" is declared with the "var" keyword.
-println(x * x) // 9
+println(y * y) // 9
 
 // Comme pour les valeurs, le type d'une variable peut être omis et déduit, ou bien il peut être explicitement indiqué :
-var x: Int = 1 + 1
+var Z: Int = 1 + 1
 
 // -----------------------------------------------------------------
 // Les blocs - Blocks
 // -----------------------------------------------------------------
 // Vous pouvez combiner des expressions en les entourant de {}. Nous appelons cela un bloc. Le résultat de la dernière expression du bloc est également le résultat de l'ensemble du bloc :
 println({
-  val x = 1 + 1
-  x + 1
+  val Z = 1 + 1
+  Z + 1
 }) // 3
 
 // -----------------------------------------------------------------
@@ -56,7 +56,6 @@ println({
 // Les fonctions sont des expressions qui ont des paramètres et prennent des arguments.
 // Vous pouvez définir une fonction anonyme (c'est-à-dire une fonction qui n'a pas de nom) qui renvoie un nombre entier donné plus un :
 (x: Int) => x + 1
-
 
 // A gauche de => se trouve une liste de paramètres. A droite, une expression impliquant les paramètres.
 // Vous pouvez également nommer les fonctions :
@@ -70,7 +69,7 @@ println(add(1, 2)) // 3
 
 // Ou il peut ne pas avoir de paramètres du tout :
 val getTheAnswer = () => 42
-println(getTheAnswer()) // 42
+println(getTheAnswer())
 
 // -----------------------------------------------------------------
 // Les méthodes dans scala - Methods
@@ -117,6 +116,3 @@ class Greeter(prefix: String, suffix: String) {
 
 val greeter = new Greeter("Hello, ", "!") // pas besoin de new dans scala 3
 greeter.greet("Abdelmajid") // Hello, Scala developer!
-
-
-
