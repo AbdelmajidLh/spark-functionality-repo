@@ -2,7 +2,10 @@
 .bloop
 .bsp
 .metals
-project/metals.sbt
+chapitre0/.metals
+chapitre0/.vscode
+chapitre0/.bloop
+chapitre0/target
 
 # vs code
 .vscode
@@ -11,7 +14,7 @@ project/metals.sbt
 .tasty
 
 # sbt
-project/project/
+chapitre0/project/
 project/target/
 target/
 
