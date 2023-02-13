@@ -1,0 +1,4 @@
+[debug] [chapitre0-build] Classpath dependencies List()
+[debug] [chapitre0-build] Dependencies from configurations List()
+[debug] Bloop wrote the configuration of project 'chapitre0-build' to 'C:\Git\scala3_basics\chapitre0\project\.bloop\chapitre0-build.json'
+[success] Generated .bloop\chapitre0-build.json
