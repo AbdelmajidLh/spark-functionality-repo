@@ -29,14 +29,6 @@ progressivement avec les fonctionnalités de Spark et de renforcer votre compré
 ## Les données
 L'ensemble des données utilisées dans les exemples sont disponibles à ce lien : [lien_vers_les_données](https://github.com/databricks/Spark-The-Definitive-Guide/tree/master/data)
 
-## Scala
-
-- [Chapitre 1](scala/feature1/example1.md)
-- [Exemple 2](scala/feature2/example2.md)
-- ...
-
-
-
 ## Comment contribuer
 
 Pour contribuer à ce projet, veuillez suivre ces étapes :
@@ -47,5 +39,4 @@ Pour contribuer à ce projet, veuillez suivre ces étapes :
 5. Ouvrez une demande de tirage
 
 ## Licence
-
 Ce projet est sous licence [MIT](LICENSE).
