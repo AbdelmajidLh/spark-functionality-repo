@@ -130,4 +130,74 @@ purchaseByCustomerPerHour.writeStream
 .outputMode("complete")
 .start()
 ```
+Vous aurez un tableau comme ça (qui se met à jour à chaque batch)
+```scala
+// -------------------------------------------
+// Batch: 11
+// -------------------------------------------
+// +----------+--------------------+-------------------+
+// |CustomerId|              window|    sum(total_cost)|
+// +----------+--------------------+-------------------+
+// |   17576.0|{2010-12-13 01:00...| 177.35000000000002|
+// |   15039.0|{2010-12-14 01:00...|  706.2500000000002|
+// |   16250.0|{2010-12-01 01:00...|             226.14|
+// |   14594.0|{2010-12-01 01:00...| 254.99999999999997|
+// |   15899.0|{2010-12-06 01:00...|              56.25|
+// |   14850.0|{2010-12-07 01:00...|              -47.6|
+// |   17220.0|{2010-12-10 01:00...| 317.50000000000006|
+// |   14865.0|{2010-12-02 01:00...|               37.2|
+// |   14800.0|{2010-12-05 01:00...|  555.8399999999999|
+// |   14256.0|{2010-12-10 01:00...|  523.8599999999999|
+// |   12434.0|{2010-12-14 01:00...|-27.749999999999996|
+// |   18041.0|{2010-12-02 01:00...|  428.9399999999999|
+// |   16565.0|{2010-12-10 01:00...|              173.7|
+// |   17949.0|{2010-12-03 01:00...|             1314.0|
+// |   17675.0|{2010-12-07 01:00...|  541.5200000000001|
+// |   18118.0|{2010-12-10 01:00...| 132.64999999999998|
+// |   12471.0|{2010-12-10 01:00...|            2360.41|
+// |   13329.0|{2010-12-14 01:00...|-13.200000000000001|
+// |   15555.0|{2010-12-05 01:00...|             198.43|
+// |   18074.0|{2010-12-01 01:00...|              489.6|
+// +----------+--------------------+-------------------+
+```
 Volà!, vous avez lancer votre premier job en streaming (lecture de plusieurs fichiers csv).
+
+### Apprentissage automatique et analyses avancées
+Un autre aspect populaire de Spark est sa capacité à effectuer un apprentissage automatique (machine Learning) à grande échelle avec une bibliothèque intégrée d'algorithmes d'apprentissage 
+automatique appelée *`MLlib`*. MLlib permet la prétraitement, la manipulation, l'entraînement des modèles et la réalisation de prédictions à grande échelle sur les données. 
+Vous pouvez même utiliser des modèles entraînés dans MLlib pour effectuer des prédictions dans Structured Streaming. Spark fournit une API d'apprentissage automatique sophistiquée pour 
+effectuer une variété de tâches d'apprentissage automatique, de la classification à la régression, en passant par le clustering et l'apprentissage profond (deep learning). 
+Pour illustrer cette fonctionnalité, nous effectuerons un simple clustering sur nos données à l'aide d'un algorithme standard appelé K-means.
+
+On va utiliser le meme dataset sur le retail : 
+```scala
+staticDataFrame.printSchema()
+// root
+// |-- InvoiceNo: string (nullable = true)
+// |-- StockCode: string (nullable = true)
+// |-- Description: string (nullable = true)
+// |-- Quantity: integer (nullable = true)
+// |-- InvoiceDate: timestamp (nullable = true)
+// |-- UnitPrice: double (nullable = true)
+// |-- CustomerID: double (nullable = true)
+// |-- Country: string (nullable = true)
+```
+
+Les algorithmes d'apprentissage automatique dans MLlib exigent que les données soient représentées sous forme de valeurs numériques. Nos données actuelles sont représentées par une variété de types différents, notamment des horodatages, des entiers et des chaînes de caractères. Par conséquent, nous devons transformer ces données en une représentation numérique. Dans ce cas, nous utiliserons plusieurs transformations de DataFrame pour manipuler nos données de date :
+```scala
+import org.apache.spark.sql.functions.date_format
+val prepDataFrame = staticDataFrame.na.fill(0).withColumn("day_of_week", date_format($"InvoiceDate", "EEEE"))
+prepDataFrame.show()
+```
+
+Dans cet exemple, nous divisons les données en un ensemble d'entraînement et un ensemble de test en utilisant la date à laquelle un certain achat a eu lieu. Nous utilisons la fonction where pour filtrer les données en fonction de la date de la facture.
+```scala
+// Séparation des données en ensembles d'entraînement et de test
+val trainDataFrame = prepDataFrame.where("InvoiceDate < '2011-07-01'")
+val testDataFrame = prepDataFrame.where("InvoiceDate >= '2011-07-01'")
+```
+Nous verrons que cela divise approximativement notre ensemble de données en deux (Bien que cela puisse ne pas être la division optimale pour notre entraînement et notre test):
+```scala
+trainDataFrame.count()
+testDataFrame.count()
+```
