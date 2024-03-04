@@ -27,6 +27,6 @@ Voici un exemple à lancer sur votre machine en local :
 ```
 Cet exemple d'application calcule les décimales de pi avec une certaine précision. Nous avons spécifié à spark-submit que nous voulons exécuter localement, en précisant la classe et le JAR à exécuter, ainsi que des arguments en ligne de commande pour cette classe.
 
-ℹ️ ```
-En modifiant l'argument master de spark-submit, nous pouvons également soumettre la même application à un cluster exécutant le gestionnaire de cluster autonome de Spark, Mesos ou YARN.
+```
+ℹ️ En modifiant l'argument master de spark-submit, nous pouvons également soumettre la même application à un cluster exécutant le gestionnaire de cluster autonome de Spark, Mesos ou YARN.
 ```
