@@ -26,6 +26,7 @@ l'exécuter directement sur la plateforme Databricks. Vous apprendrez pas à pas
 Chaque fichier Markdown comprendra des conseils, des commentaires explicatifs et le code à exécuter dans Spark, vous permettant ainsi de vous familiariser 
 progressivement avec les fonctionnalités de Spark et de renforcer votre compréhension de son utilisation dans le contexte du Big Data.
 
+**Spark 3.5.0, Scala 2.12.18 et Java 11.0.22)
 ## Les données
 L'ensemble des données utilisées dans les exemples sont disponibles à ce lien : [lien_vers_les_données](https://github.com/databricks/Spark-The-Definitive-Guide/tree/master/data)
 

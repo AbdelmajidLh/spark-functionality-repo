@@ -30,3 +30,17 @@ Cet exemple d'application calcule les décimales de pi avec une certaine précis
 ```
 ℹ️ En modifiant l'argument master de spark-submit, nous pouvons également soumettre la même application à un cluster exécutant le gestionnaire de cluster autonome de Spark, Mesos ou YARN.
 ```
+
+### Datasets : APIs de type sécurisé pour les données structurées
+Les Datasets offrent une API de type sécurisé pour manipuler des données structurées dans Spark. 
+Ils permettent de définir le schéma des données en utilisant des classes Java ou Scala, offrant ainsi une manipulation plus sécurisée des données. 
+Avec les Datasets, les opérations de transformation et de manipulation des données sont vérifiées à la compilation, ce qui permet de détecter les erreurs de type à l'avance. De plus, les Datasets sont optimisés pour des performances élevées, ce qui les rend idéaux pour le traitement de gros volumes de données dans des environnements distribués.
+
+Voici un petit exemple montrant comment vous pouvez utiliser à la fois des fonctions de type sécurisé et des expressions SQL similaires à celles des DataFrames pour écrire rapidement la logique métier :
+
+```scala
+case class Flight(DEST_COUNTRY_NAME: String, ORIGIN_COUNTRY_NAME: String, count: BigInt)
+val flightsDF = spark.read.parquet("D:/data/flight-data/parquet/2010-summary.parquet/")
+val flights = flightsDF.as[Flight]
+```
+
