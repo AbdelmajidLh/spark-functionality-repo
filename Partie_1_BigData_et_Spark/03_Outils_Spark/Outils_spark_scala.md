@@ -62,3 +62,72 @@ flights.take(5)
       .filter(flight_row => flight_row.ORIGIN_COUNTRY_NAME != "Canada")
       .map(fr => Flight(fr.DEST_COUNTRY_NAME, fr.ORIGIN_COUNTRY_NAME, fr.count + 5))
 ```
+### Le streaming avec Spark
+Structured **Streaming** est une API de haut niveau pour le traitement de flux, intégrée dans Spark 3, permettant d'exécuter des opérations similaires à celles du mode **batch** en mode streaming, offrant une réduction de la latence et une transformation incrémentielle des données avec peu de changements de code.
+
+Nous allons explorer un exemple simple de Structured Streaming en utilisant un jeu de données de vente au détail, avec des dates et heures spécifiques, pour simuler des données produites de manière régulière par des magasins, en créant un DataFrame statique et un schéma associé.
+
+```scala
+// Lecture des données statiques depuis un fichier CSV
+val staticDataFrame = spark.read.format("csv").option("header", "true").option("inferSchema", "true").load("D:/data/retail-data/by-day/*.csv")
+
+// Afficher les 10 premières lignes
+staticDataFrame.show(10)
+
+// Création d'une vue temporaire pour le DataFrame statique
+staticDataFrame.createOrReplaceTempView("retail_data")
+val staticSchema = staticDataFrame.schema
+
+// Agrégation des données par heure de vente pour identifier les jours où un client dépense le plus
+import org.apache.spark.sql.functions.{window, column, desc, col}
+staticDataFrame.selectExpr("CustomerId", "(UnitPrice * Quantity) as total_cost",
+"InvoiceDate").groupBy(col("CustomerId"), window(col("InvoiceDate"), "1 day")).sum("total_cost").show(5)
+```
+Vous aurez quelque chose comme ça :
+```scala
+// +----------+--------------------+-----------------+
+// |CustomerId|              window|  sum(total_cost)|
+// +----------+--------------------+-----------------+
+// |   16057.0|{2011-12-05 01:00...|            -37.6|
+// |   14126.0|{2011-11-29 01:00...|643.6300000000001|
+// |   13500.0|{2011-11-16 01:00...|497.9700000000001|
+// |   17160.0|{2011-11-08 01:00...|516.8499999999999|
+// |   15608.0|{2011-11-11 01:00...|            122.4|
+// +----------+--------------------+-----------------+
+```
+Maintenant, passant en mode `streaming` pour voir ce qui change par rapport au mode batch (dataframe).
+Commençant par réduire le nombre de partitions pour le shuffle à 5 (Par défaut, Spark utilise un nombre de partitions déterminé par la configuration spark.sql.shuffle.partitions, qui est souvent ajusté automatiquement en fonction des ressources disponibles, mais est généralement égal au nombre de cœurs sur la machine en mode local.
+)
+```scala
+// Configuration du nombre de partitions pour le shuffle à 5 pour une exécution en mode local
+spark.conf.set("spark.sql.shuffle.partitions", "5")
+
+// Lecture des données en streaming à partir de plusieurs fichiers CSV
+val streamingDataFrame = spark.readStream.schema(staticSchema).option("maxFilesPerTrigger", 1).format("csv").option("header", "true").load("D:/data/retail-data/by-day/*.csv")
+
+// Agrégation des données par heure de vente pour le streaming (même action que sur le dataframe)
+val purchaseByCustomerPerHour = streamingDataFrame.selectExpr("CustomerId",
+"(UnitPrice * Quantity) as total_cost","InvoiceDate").groupBy($"CustomerId", window($"InvoiceDate", "1 day")).sum("total_cost")
+
+// Écriture des résultats en streaming dans une table en mémoire
+purchaseByCustomerPerHour
+.writeStream.format("memory") // stockage dans une table en mémoire
+.queryName("customer_purchases") // nom de la table en mémoire
+.outputMode("complete") // mode de sortie complet
+.start()
+
+// Exécution d'une requête SQL pour afficher les résultats en temps réél (mis à jour au fur à mesure de la lécture des fichiers)
+spark.sql("""
+SELECT *
+FROM customer_purchases
+ORDER BY `sum(total_cost)` DESC
+""").show(5)
+
+// Écriture des résultats en streaming dans la console : pas recommandé en production
+purchaseByCustomerPerHour.writeStream
+.format("console")
+.queryName("customer_purchases_2")
+.outputMode("complete")
+.start()
+```
+Volà!, vous avez lancer votre premier job en streaming (lecture de plusieurs fichiers csv).
