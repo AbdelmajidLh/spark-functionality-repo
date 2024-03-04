@@ -43,4 +43,22 @@ case class Flight(DEST_COUNTRY_NAME: String, ORIGIN_COUNTRY_NAME: String, count:
 val flightsDF = spark.read.parquet("D:/data/flight-data/parquet/2010-summary.parquet/")
 val flights = flightsDF.as[Flight]
 ```
+#### - Opérations sur le Dataset flights :
 
+- Filtre les vols pour exclure ceux dont le pays d'origine est le Canada.
+- Mappe chaque ligne de vol telle quelle et prend les 5 premières lignes.
+```scala
+flights.filter(flight_row => flight_row.ORIGIN_COUNTRY_NAME != "Canada")
+      .map(flight_row => flight_row)
+      .take(5)
+```
+#### - Opérations sur le Dataset flights :
+
+- Prend les 5 premières lignes de vols.
+- Filtre ces lignes pour exclure celles dont le pays d'origine est le Canada.
+- Mappe chaque ligne de vol pour créer un nouvel objet Flight avec le pays de destination, le pays d'origine et le nombre de vols augmenté de 5 pour chacun.
+```scala
+flights.take(5)
+      .filter(flight_row => flight_row.ORIGIN_COUNTRY_NAME != "Canada")
+      .map(fr => Flight(fr.DEST_COUNTRY_NAME, fr.ORIGIN_COUNTRY_NAME, fr.count + 5))
+```
